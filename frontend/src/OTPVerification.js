@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import "./App.css"; 
 
 export default function OTPVerification() {
   const navigate = useNavigate();
   const [otp, setOTP] = useState(["", "", "", "", "", ""]); // Array to hold each digit of OTP
   const inputRefs = useRef([]); // Refs to manage focus between input boxes
+  const [verificationError, setVerificationError] = useState(null);
 
   // Function to handle changes in OTP input boxes
   const handleChange = (index, value) => {
@@ -22,15 +24,42 @@ export default function OTPVerification() {
     }
   };
 
-  // Function to handle form submission (e.g., OTP validation)
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    // Validate the OTP (for demo purposes, just navigate to success page)
-    navigate("/success");
+  // Function to handle keyboard input (Backspace key)
+  const handleKeyDown = (index, event) => {
+    if (event.key === "Backspace" && index > 0 && !otp[index]) {
+      // If Backspace is pressed and the current box is empty, move focus to the previous box
+      inputRefs.current[index - 1].focus();
+    }
   };
 
-  // Create an array of 6 input boxes for OTP digits
+  // Function to handle form submission (e.g., OTP validation)
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // Validate the OTP (for demo purposes, just navigate to success page)
+    const enteredOTP = otp.join("");
+    fetch("/verify/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+      body: JSON.stringify({ otp: enteredOTP }),
+    })
+      .then((response) => {
+       if (!response.ok) {
+          throw new Error("OTP verification failed");
+        }
+      return response.json();
+    })
+     .then((data) => {
+      navigate("/dashboard");
+    })
+     .catch((error) => {
+      console.error("Error verifying OTP", error);
+      setVerificationError("OTP verification failed. Please try again");
+    });
+  };
+
+  
   const otpInputs = Array.from({ length: 6 }, (_, index) => (
     <input
       key={index}
@@ -38,42 +67,23 @@ export default function OTPVerification() {
       maxLength={1}
       value={otp[index]}
       onChange={(e) => handleChange(index, e.target.value)}
+      onKeyDown={(e) => handleKeyDown(index, e)}
       ref={(el) => (inputRefs.current[index] = el)}
-      style={{
-        width: "30px",
-        height: "30px",
-        margin: "5px",
-        textAlign: "center",
-        fontSize: "16px",
-      }}
+      className="otp-input"
     />
   ));
 
   return (
-    <div className="OTP-verification-container" style={styles.container}>
-      <h3>Enter OTP</h3>
-      <form onSubmit={handleSubmit}>
-        <div style={styles.otpContainer}>{otpInputs}</div>
-        <button type="submit" className="btn btn-primary mt-3 ">
+    <div className="OTP-verification-container">
+      <h3 className="Auth-form-title">Enter OTP</h3>
+      <form onSubmit={handleSubmit} className="Auth-form-content">
+        <div className="otpContainer">{otpInputs}</div>
+        <button type="submit" className="btn btn-primary mt-3">
           Verify OTP
         </button>
+        {verificationError && <p style={{color: "red"}}>{verificationError}</p>} 
+        
       </form>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh", // Full viewport height
-  },
-  otpContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "20px",
-  },
-};
