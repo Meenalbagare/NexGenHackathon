@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import OTPVerification from "./OTPVerification";
 
 export default function Auth() {
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState("signin");
+  const [otp, setOTP] = useState(false);
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
@@ -14,8 +16,14 @@ export default function Auth() {
     // Perform authentication logic here (e.g., validate credentials)
     //CREATE FETCH API : IF ITS YES GO TO DASHBOARD USING AUTHENTICATION
     // For demo purposes, navigate to OTP verification upon successful authentication
-    navigate("/verify-otp");
+    if(authMode=="signup")
+    setOTP(true);
   };
+
+  if (authMode=="signup" && otp) {
+    return <OTPVerification />;
+  }
+
   return (
     <div className="Auth-form-container">
       <form className="Auth-form" onSubmit={handleSubmit}>
