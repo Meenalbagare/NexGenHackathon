@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css'; // Import the corresponding CSS file
 import { useNavigate } from "react-router-dom";
+import { RiChatNewLine } from "react-icons/ri";
 
 const Dashboard = () => {
   const [chats, setChats] = useState([[]]); // State to hold chat messages (array of chats)
@@ -45,8 +46,9 @@ const Dashboard = () => {
 
   const handleNewChat = () => {
     const newChat = [];
-    setChats([newChat, ...chats]); // Place new chat at the beginning of the chats array
-    setCurrentChatIndex(0); // Switch to the new chat index
+    setChats([...chats, newChat]); // Add new chat to the end of the chats array
+    setCurrentChatIndex(chats.length); // Switch to the new chat index
+    setNewMessage(''); // Clear the message input for the new chat
   };
 
   return (
@@ -55,17 +57,17 @@ const Dashboard = () => {
       <div className="chat-history">
         {/* "New Chat" Header */}
         <div className="new-chat-header">
-          <h3>New Chat</h3>
-          {/* <div className="new-chat-label">New Chat</div> */}
+          <h3 className='chats-text'>Chats</h3>
+          {/* Button to create a new chat */}
           <button className="new-chat-button" onClick={handleNewChat}>
-            + New Chat
+            <RiChatNewLine />
           </button>
         </div>
         {/* Render chat tabs for each chat */}
         <div className="chat-tabs">
           {chats.map((chat, index) => (
             <div key={index} className={`chat-tab ${index === currentChatIndex ? 'active-chat' : ''}`}>
-              <button onClick={() => setCurrentChatIndex(index)}>
+              <button className='chat-buttons' onClick={() => setCurrentChatIndex(index)}>
                 Chat {index + 1}
               </button>
             </div>

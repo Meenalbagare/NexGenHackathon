@@ -17,50 +17,90 @@ export default function Auth() {
     // Perform authentication logic here (e.g., validate credentials)
     //CREATE FETCH API : IF ITS YES GO TO DASHBOARD USING AUTHENTICATION
     // For demo purposes, navigate to OTP verification upon successful authentication
-    const formData = new FormData(event.target);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const password = formData.get("password");
+    if( authMode === "signup") {
+      const formData = new FormData(event.target);
+      const name = formData.get("name");
+      const email = formData.get("email");
+      const password = formData.get("password");
 
-    // Assuming you have an endpoint to send the data
-    const url = "http://localhost:8000/register/";
-    const data = {
-      email,
-      name,
-      password
-    };
-    console.log(JSON.stringify(data), url)
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-  
-      if (response.ok) {
-        console.log("here")
-        // If the response is successful, parse the response JSON
-        const responseData = await response.json();
-        // Assuming responseData contains message and requestId
-        const { message, request_id } = responseData;
-        setReqId(request_id)
-        // Handle the message and requestId as needed
-        console.log("Response message:", message);
-        console.log("Request ID:", request_id);
-  
-        // For demo purposes, navigate to OTP verification upon successful authentication
-        if (authMode === "signup") {
-          setOTP(true);
+      // Assuming you have an endpoint to send the data
+      const url = "http://localhost:8000/register/";
+      const data = {
+        email,
+        name,
+        password
+      };
+      console.log(JSON.stringify(data), url)
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+    
+        if (response.ok) {
+          console.log("here")
+          // If the response is successful, parse the response JSON
+          const responseData = await response.json();
+          // Assuming responseData contains message and requestId
+          const { message, request_id } = responseData;
+          setReqId(request_id)
+          // Handle the message and requestId as needed
+          console.log("Response message:", message);
+          console.log("Request ID:", request_id);
+    
+          // For demo purposes, navigate to OTP verification upon successful authentication
+          if (authMode === "signup") {
+            setOTP(true);
+          }
+        } else {
+          // Handle error cases here
+          console.error("Error:", response.statusText);
         }
-      } else {
-        // Handle error cases here
-        console.error("Error:", response.statusText);
+      } catch (error) {
+        // Handle fetch error
+        console.error("Fetch error:", error);
       }
-    } catch (error) {
-      // Handle fetch error
-      console.error("Fetch error:", error);
+    }
+    else {
+      const formData = new FormData(event.target);
+      const email = formData.get("email");
+      const password = formData.get("password");
+
+      // Assuming you have an endpoint to send the data
+      const url = "http://localhost:8000/login/";
+      const data = {
+        email,
+        password
+      };
+      console.log(JSON.stringify(data), url)
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          // If the response is successful, parse the response JSON
+          const responseData = await response.json();
+          // Assuming responseData contains message and requestId
+          const message = responseData;
+          localStorage.setItem('auth_key', message)
+          navigate("/dashboard")
+
+        } else {
+          // Handle error cases here
+          console.error("Error:", response.statusText);
+        }
+      } catch (error) {
+        // Handle fetch error
+        console.error("Fetch error:", error);
+      }
     }
   };
 
