@@ -35,28 +35,29 @@ export default function OTPVerification() {
   // Function to handle form submission (e.g., OTP validation)
   const handleSubmit = async (event) => {
     event.preventDefault();
+    navigate("/Dashboard")
     // Validate the OTP (for demo purposes, just navigate to success page)
-    const enteredOTP = otp.join("");
-    fetch("/verify/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-      body: JSON.stringify({ otp: enteredOTP }),
-    })
-      .then((response) => {
-       if (!response.ok) {
-          throw new Error("OTP verification failed");
-        }
-      return response.json();
-    })
-     .then((data) => {
-      navigate("/dashboard");
-    })
-     .catch((error) => {
-      console.error("Error verifying OTP", error);
-      setVerificationError("OTP verification failed. Please try again");
-    });
+    // const enteredOTP = otp.join("");
+    // fetch("/verify/", {
+    // method: "POST",
+    // headers: {
+    //   "Content-Type": "application/json",
+    // },
+    //   body: JSON.stringify({ otp: enteredOTP }),
+    // })
+    //   .then((response) => {
+    //    if (!response.ok) {
+    //       throw new Error("OTP verification failed");
+    //     }
+    //   return response.json();
+    // })
+    //  .then((data) => {
+    //   navigate("/dashboard");
+    // })
+    //  .catch((error) => {
+    //   console.error("Error verifying OTP", error);
+    //   setVerificationError("OTP verification failed. Please try again");
+    // });
   };
 
   
