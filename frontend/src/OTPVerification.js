@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css"; 
 
-export default function OTPVerification() {
+export default function OTPVerification( request_id) {
   const navigate = useNavigate();
   const [otp, setOTP] = useState(["", "", "", "", "", ""]); // Array to hold each digit of OTP
   const inputRefs = useRef([]); // Refs to manage focus between input boxes
@@ -35,29 +35,30 @@ export default function OTPVerification() {
   // Function to handle form submission (e.g., OTP validation)
   const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate("/dashboard")
+    navigate("/Dashboard")
     // Validate the OTP (for demo purposes, just navigate to success page)
-    // const enteredOTP = otp.join("");
-    // fetch("/verify/", {
-    // method: "POST",
-    // headers: {
-    //   "Content-Type": "application/json",
-    // },
-    //   body: JSON.stringify({ otp: enteredOTP }),
-    // })
-    //   .then((response) => {
-    //    if (!response.ok) {
-    //       throw new Error("OTP verification failed");
-    //     }
-    //   return response.json();
-    // })
-    //  .then((data) => {
-    //   navigate("/dashboard");
-    // })
-    //  .catch((error) => {
-    //   console.error("Error verifying OTP", error);
-    //   setVerificationError("OTP verification failed. Please try again");
-    // });
+    const enteredOTP = otp.join("");
+    console.log(request_id.reqid, enteredOTP)
+    fetch("http://localhost:8000/verify/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ requestId: request_id.reqid, otp: enteredOTP }),
+    })
+      .then((response) => {
+       if (!response.ok) {
+          throw new Error("OTP verification failed");
+        }
+      return response.json();
+    })
+     .then((data) => {
+      navigate("/");
+    })
+     .catch((error) => {
+      console.error("Error verifying OTP", error);
+      setVerificationError("OTP verification failed. Please try again");
+    });
   };
 
   
