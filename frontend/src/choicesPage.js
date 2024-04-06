@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./App.css";
+import "./choicesPage.css";
 const ChoicesPage = () => {
   const navigate = useNavigate();
 
@@ -12,18 +12,13 @@ const ChoicesPage = () => {
     navigate("/practice-questions");
   };
 
-  return (
+    return (
     <div className="container">
-      <div className="button-container">
-        <button className="button" onClick={handleMentorClick}>
-          24/7 mentor
-        </button>
-        <button className="button" onClick={handlePracticeQuestionsClick}>
-          Practice Questions
-        </button>
-      </div>
+      <div className="box questions" onClick={handleMentorClick}>24/7 mentor</div>
+      <div className="box tutoring" onClick={handlePracticeQuestionsClick}>Practice Questions</div>
     </div>
   );
 };
+
 
 export default ChoicesPage;

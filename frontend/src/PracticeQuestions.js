@@ -6,7 +6,7 @@ const Textbook = () => {
     const navigate = useNavigate();
     const handleMCQClick = () => {
         // Navigate to the MCQ page or perform any action
-        console.log("Clicked MCQ");
+        navigate("/mcq");
       };
     
       const handleDescriptiveClick = () => {

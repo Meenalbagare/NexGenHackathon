@@ -1,6 +1,6 @@
 import mysql.connector
 
-password = "root"
+password = "MySqL@123"
 
 def create_database():
     try:

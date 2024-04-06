@@ -17,8 +17,11 @@ def import_module_from_directory(directory, package_name, module_name):
 
     return module
 
-bing_module = import_module_from_directory("..", "scrapers", "bing")
-google_module = import_module_from_directory("..", "scrapers", "google")
+bing_module = import_module_from_directory(os.path.basename(os.path.dirname(os.path.abspath(__file__)), "scrapers", "bing"))
+google_module = import_module_from_directory(os.path.basename(os.path.dirname(os.path.abspath(__file__)), "scrapers", "google"))
+vector_db = import_module_from_directory(os.path.dirname(os.path.abspath(__file__), "text"))
+
+
 
 google_api_key = os.getenv("API_KEY")
 
