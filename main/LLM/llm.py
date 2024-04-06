@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-# import database
 
 load_dotenv()
 
@@ -122,17 +121,17 @@ def chat(user_id, chat_id, prompt):
     return response
 
 def extendedChat(user_id, chat_id, prompt):
-    if( chat_id == None ):
+    if( chat_id == -1 ):
         extended_prompt = getExtendedPrompt(prompt)
         response, history = getExtendedChatResponse( prompt )
         topic = getChatTopic( prompt )
-        database.insert_into_history_table( user_id, topic, history)
+        chat_id = database.insert_into_history_table( user_id, topic, history)
     else:
         extended_prompt = getExtendedPrompt(prompt)
         history = database.getChatHistory( chat_id, user_id)
         response, history = getChatResponse( prompt, history )
         database.update_chat_history( chat_id, user_id, history)
-    return response
+    return response, chat_id
 
 def getChatTopic( first_prompt ):
     prompt = f"""Generate a concise and appropriate topic for this user prompt: "{first_prompt}" within 20 characters.
