@@ -50,7 +50,7 @@ export default function Auth() {
           // Handle the message and requestId as needed
           console.log("Response message:", message);
           console.log("Request ID:", request_id);
-    
+          
           // For demo purposes, navigate to OTP verification upon successful authentication
           if (authMode === "signup") {
             setOTP(true);
@@ -91,7 +91,8 @@ export default function Auth() {
           // Assuming responseData contains message and requestId
           const message = responseData;
           localStorage.setItem('auth_key', message)
-          navigate("/dashboard")
+          // navigate("/dashboard")
+          navigate("/choices")
 
         } else {
           // Handle error cases here
