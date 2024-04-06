@@ -1,6 +1,6 @@
 import mysql.connector
 
-password = "Password123$"
+password = "root"
 
 def create_database():
     try:
@@ -15,6 +15,7 @@ def create_database():
         cursor = connection.cursor()
 
         # Creating a database if it doesn't exist
+        cursor.execute("DROP DATABASE IF EXISTS NexGenDB")
         cursor.execute("CREATE DATABASE IF NOT EXISTS NexGenDB")
 
         print("Database created successfully")
