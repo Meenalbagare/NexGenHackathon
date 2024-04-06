@@ -1,9 +1,20 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import pyotp
 from pydantic import BaseModel
+import mysql.connector
+
+connection = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Password123$",
+    database="NexGenDB"
+)
+
+cursor = connection.cursor()
 
 class UserRegistration(BaseModel):
     email: str
@@ -44,6 +55,10 @@ verify_data = {}
 
 
 def otpMail(mail, name, password):
+    cursor.execute("SELECT * FROM users WHERE email = %s", (mail,))
+    result = cursor.fetchone()
+    if result:
+        raise HTTPException(status_code=400, detail="Email already exists")
     reqid[0] += 1
     totp = pyotp.TOTP(generateAuthenticationKey(), interval=300)
     body = f"""
@@ -72,6 +87,22 @@ def otpMail(mail, name, password):
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:8080",  # Add your frontend URL here
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://localhost:3001"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
+
 
 
 @app.post("/register/")
@@ -92,13 +123,34 @@ class verify(BaseModel):
 
 
 @app.post("/verify/")
-async def register(verify_data: verify):
-    if verify_data.requestId not in ids:
+async def register(verify_val: verify):
+    if verify_val.requestId not in ids:
         raise HTTPException(status_code=400, detail="Invalid request ID")
+        
     else:
-        if ids[verify_data.requestId].verify(verify_data.otp):
-            return {"message": "OTP is valid. User registered successfully."}
+        if ids[verify_val.requestId].verify(verify_val.otp):
+            curr = generateAuthenticationKey()
+            cursor.execute('INSERT INTO users (name, email, password, auth) VALUES (%s, %s, %s, %s)', (verify_data[verify_val.requestId][1], verify_data[verify_val.requestId][0], verify_data[verify_val.requestId][2], curr))
+            connection.commit()     
+            return {"message": curr}
         else:
             raise HTTPException(status_code=400, detail="Invalid OTP")
-        
+class login(BaseModel):
+    email: str
+    password: str
+
+@app.post("/login/")
+async def login(user_data: login):
+    email = user_data.email
+    password = user_data.password
+
+    cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+    result = cursor.fetchone()
+    print(result)
+    print(password)
+    if not result:
+        raise HTTPException(status_code=400, detail="User not found")
+    if result[3] != password:
+        raise HTTPException(status_code=400, detail="Invalid password")
+    return {"message": result[4]}
 

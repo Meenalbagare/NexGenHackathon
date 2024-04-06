@@ -1,6 +1,6 @@
 import mysql.connector
 
-password = "root"
+password = "Password123$"
 
 def create_database():
     try:
@@ -47,7 +47,8 @@ def create_table():
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             email VARCHAR(100) NOT NULL,
-            password VARCHAR(100) NOT NULL
+            password VARCHAR(100) NOT NULL,
+            auth VarChar(100) NOT NULL
         )
         """
 
