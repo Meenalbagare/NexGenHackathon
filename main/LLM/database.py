@@ -134,8 +134,17 @@ def insert_into_history_table( user_id, topic, history):
         )
         """
 
+        select_query = f"""
+            SELECT chat_id FROM chat_history WHERE user_id = {user_id} DESC LIMIT 1
+        """
         # Executing the SQL query
         cursor.execute(insert_query)
+        cursor.execute(select_query)
+
+        result = cursor.fetchone()
+        chat_id = result[0]
+
+        return chat_id
 
     except mysql.connector.Error as error:
         print("Failed to insert data to History table: {}".format(error))
@@ -144,6 +153,7 @@ def insert_into_history_table( user_id, topic, history):
         if connection.is_connected():
             cursor.close()
             connection.close()
+    return None
 
 def update_chat_history( chat_id, user_id, history):
     try:
