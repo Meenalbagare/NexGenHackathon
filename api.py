@@ -14,6 +14,3 @@ async def register_user(registration_data: RegistrationData):
     print(f"New registration: {registration_data}")
     return {"message": "User registered successfully", "data": registration_data}
 
-
-if __name__=="__main__":
-    print("hi")
