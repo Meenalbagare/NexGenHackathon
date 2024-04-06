@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css'; // Import the corresponding CSS file
 import { useNavigate } from "react-router-dom";
+import { RiChatNewLine } from "react-icons/ri";
 
 const Dashboard = () => {
   const [chats, setChats] = useState([[]]); // State to hold chat messages (array of chats)
@@ -56,17 +57,17 @@ const Dashboard = () => {
       <div className="chat-history">
         {/* "New Chat" Header */}
         <div className="new-chat-header">
-          <h3>New Chat</h3>
+          <h3 className='chats-text'>Chats</h3>
           {/* Button to create a new chat */}
           <button className="new-chat-button" onClick={handleNewChat}>
-            + New Chat
+            <RiChatNewLine />
           </button>
         </div>
         {/* Render chat tabs for each chat */}
         <div className="chat-tabs">
           {chats.map((chat, index) => (
             <div key={index} className={`chat-tab ${index === currentChatIndex ? 'active-chat' : ''}`}>
-              <button onClick={() => setCurrentChatIndex(index)}>
+              <button className='chat-buttons' onClick={() => setCurrentChatIndex(index)}>
                 Chat {index + 1}
               </button>
             </div>
