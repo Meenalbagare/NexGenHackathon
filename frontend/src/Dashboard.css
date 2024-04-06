@@ -52,13 +52,26 @@
     padding: 10px;
     border-radius: 8px;
     width: 95%;
-    margin-left: 10px;
+    margin-right: 10px;
+    margin-left: auto;
   }
-  
+  .chat-area .chat-message2 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    width: 95%;
+    margin-left: 10px;
+    margin-right: auto;
+  }
+
   .chat-area .sent {
     background-color: #787c82; /* Green sent messages */
   }
-  
+  .chat-area .received {
+    background-color: rgb(226, 216, 203); /* Green sent messages */
+  }
+
   .chat-input {
     border-radius: 8px;
     margin-bottom: 10px;
@@ -70,7 +83,7 @@
     margin-right: auto;
     width: 98%;
   }
-  
+
   .send-button {
     padding: 10px 20px;
     border: none;
