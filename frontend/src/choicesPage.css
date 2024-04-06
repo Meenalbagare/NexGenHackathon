@@ -8,7 +8,7 @@
   .box {
     width: 200px;
     height: 100px;
-    background-color: #6cb2eb;
+    background-color: #fff;
     border: 2px solid #333;
     border-radius: 8px;
     margin: 0 20px;
@@ -19,10 +19,10 @@
     cursor: pointer;
   }
   
-  .mcq {
+  .questions {
     background-color: #6cb2eb; /* Blue background for MCQ box */
   }
   
-  .descriptive {
+  .tutoring {
     background-color: #6cb2eb ; /* Pink background for Descriptive box */
   }

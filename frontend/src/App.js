@@ -10,6 +10,7 @@ import Dashboard from './Dashboard';
 import ChoicesPage from "./choicesPage";
 import PracticeQuestions from "./PracticeQuestions";
 import Descriptive from "./descriptive";
+import Mcq from "./mcq";
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +21,7 @@ function App() {
         <Route path="/choices" element={<ChoicesPage/>} />
         <Route path="/practice-questions" element={<PracticeQuestions />} />
         <Route path="/descriptive" element={<Descriptive/>} />
+        <Route path="/mcq" element={<Mcq/>} />
       </Routes>
     </BrowserRouter>
   )
