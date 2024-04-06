@@ -63,6 +63,8 @@ def otpMail(mail, name, password):
     ids[reqid[0]] = totp
     if sendMail(mail, "One Time Password (OTP) for NexGen Hackathon", body):
         verify_data[reqid[0]] = [mail, name, password]
+        print(ids)
+        print(verify_data)
         return {"message": "OTP sent successfully", "request_id": reqid[0]}
     else:
         return {"message": "Failed to send OTP", "request_id": None}
@@ -85,7 +87,7 @@ async def register(user_data: UserRegistration):
 
 
 class verify(BaseModel):
-    requestId: str
+    requestId: int
     otp: str
 
 
