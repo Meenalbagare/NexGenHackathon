@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css"; 
 
-export default function OTPVerification() {
+export default function OTPVerification( request_id) {
   const navigate = useNavigate();
   const [otp, setOTP] = useState(["", "", "", "", "", ""]); // Array to hold each digit of OTP
   const inputRefs = useRef([]); // Refs to manage focus between input boxes
@@ -37,12 +37,13 @@ export default function OTPVerification() {
     event.preventDefault();
     // Validate the OTP (for demo purposes, just navigate to success page)
     const enteredOTP = otp.join("");
-    fetch("/verify/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-      body: JSON.stringify({ otp: enteredOTP }),
+    console.log(request_id.reqid, enteredOTP)
+    fetch("http://localhost:8000/verify/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ requestId: request_id.reqid, otp: enteredOTP }),
     })
       .then((response) => {
        if (!response.ok) {
@@ -51,6 +52,7 @@ export default function OTPVerification() {
       return response.json();
     })
      .then((data) => {
+      localStorage.setItem('auth_key', 123)
       navigate("/dashboard");
     })
      .catch((error) => {

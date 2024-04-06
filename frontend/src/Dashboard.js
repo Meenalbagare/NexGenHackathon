@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Dashboard.css'; // Import the corresponding CSS file
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [messages, setMessages] = useState([]); // State to hold chat messages
   const [newMessage, setNewMessage] = useState(''); // State to track new message input
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setNewMessage(e.target.value); // Update new message input state
@@ -24,6 +26,20 @@ const Dashboard = () => {
       setNewMessage('');
     }
   };
+
+  useEffect(() => {
+    // Check if auth_key is present in localStorage
+    const authKey = localStorage.getItem("auth_key");
+    if (!authKey) {
+      // If auth_key is not set, redirect to login
+      navigate("/");
+    }
+  }, []);
+
+  // If auth_key is not set, return null to prevent rendering
+  if (!localStorage.getItem("auth_key")) {
+    return null;
+  }
 
   return (
     <div className="dashboard-container">
