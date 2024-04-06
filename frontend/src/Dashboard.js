@@ -3,7 +3,8 @@ import './Dashboard.css'; // Import the corresponding CSS file
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const [messages, setMessages] = useState([]); // State to hold chat messages
+  const [chats, setChats] = useState([[]]); // State to hold chat messages (array of chats)
+  const [currentChatIndex, setCurrentChatIndex] = useState(0); // State to track the current chat index
   const [newMessage, setNewMessage] = useState(''); // State to track new message input
   const navigate = useNavigate();
 
@@ -13,14 +14,15 @@ const Dashboard = () => {
 
   const handleSend = () => {
     if (newMessage.trim() !== '') {
-      // Create a new message object
-      const message = {
-        content: newMessage,
-        sentByUser: true // Assume message is sent by the user
-      };
-
-      // Update the messages state with the new message
-      setMessages([...messages, message]);
+      const updatedChats = [...chats];
+      updatedChats[currentChatIndex] = [
+        ...updatedChats[currentChatIndex],
+        {
+          content: newMessage,
+          sentByUser: true // Assume message is sent by the user
+        }
+      ];
+      setChats(updatedChats);
 
       // Clear the new message input
       setNewMessage('');
@@ -40,26 +42,39 @@ const Dashboard = () => {
   if (!localStorage.getItem("auth_key")) {
     return null;
   }
+  const handleNewChat = () => {
+    const newChat = [];
+    setChats([...chats, newChat]);
+    setCurrentChatIndex(chats.length); // Switch to the new chat index
+    setNewMessage(''); // Clear the message input for the new chat
+  };
 
   return (
     <div className="dashboard-container">
       {/* Chat History */}
       <div className="chat-history">
-        {/* Render existing chat messages */}
-        {messages.map((message, index) => (
-          <div key={index} className={`chat-item ${message.sentByUser ? 'sent' : 'received'}`}>
-            <div className="chat-content">{message.content}</div>
-          </div>
+        {/* Render chat tabs for each chat */}
+        {chats.map((chat, index) => (
+          <button
+            key={index}
+            className={`chat-tab ${index === currentChatIndex ? 'active-chat' : ''}`}
+            onClick={() => setCurrentChatIndex(index)}
+          >
+            Chat {index + 1}
+          </button>
         ))}
+        {/* Button to create a new chat */}
+        <button className="new-chat-button" onClick={handleNewChat}>
+          + New Chat
+        </button>
       </div>
 
       {/* Chat Space */}
       <div className="chat-space">
-        {/* Chat area */}
+        {/* Display messages of the current active chat */}
         <div className="chat-area">
-          {/* Chat messages */}
-          {messages.map((message, index) => (
-            <div key={index} className={`chat-message ${message.sentByUser ? 'sent' : 'received'}`}>
+          {chats[currentChatIndex].map((message, idx) => (
+            <div key={idx} className={`chat-message ${message.sentByUser ? 'sent' : 'received'}`}>
               {message.content}
             </div>
           ))}

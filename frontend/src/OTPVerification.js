@@ -35,6 +35,7 @@ export default function OTPVerification( request_id) {
   // Function to handle form submission (e.g., OTP validation)
   const handleSubmit = async (event) => {
     event.preventDefault();
+    navigate("/Dashboard")
     // Validate the OTP (for demo purposes, just navigate to success page)
     const enteredOTP = otp.join("");
     console.log(request_id.reqid, enteredOTP)
