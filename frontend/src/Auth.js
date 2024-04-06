@@ -91,6 +91,7 @@ export default function Auth() {
           // Assuming responseData contains message and requestId
           const message = responseData;
           localStorage.setItem('auth_key', message)
+          localStorage.setItem('email', email)
           // navigate("/dashboard")
           navigate("/choices")
 
