@@ -10,7 +10,7 @@ import mysql.connector
 connection = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Password123$",
+    password="MySqL@123",
     database="NexGenDB"
 )
 
@@ -92,7 +92,8 @@ origins = [
     "http://localhost:8080",  # Add your frontend URL here
     "http://localhost:3000",
     "http://localhost:8000",
-    "http://localhost:3001"
+    "http://localhost:3001",
+    "http://127.0.0.1:3000"
 ]
 
 app.add_middleware(

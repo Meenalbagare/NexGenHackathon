@@ -24,7 +24,7 @@ export default function OTPVerification( request_id) {
     }
   };
 
-  // Function to handle keyboard input (Backspace key)
+  // Backspace key
   const handleKeyDown = (index, event) => {
     if (event.key === "Backspace" && index > 0 && !otp[index]) {
       // If Backspace is pressed and the current box is empty, move focus to the previous box
@@ -38,6 +38,7 @@ export default function OTPVerification( request_id) {
     navigate("/Dashboard")
     // Validate the OTP (for demo purposes, just navigate to success page)
     const enteredOTP = otp.join("");
+    
     console.log(request_id.reqid, enteredOTP)
     fetch("http://localhost:8000/verify/", {
       method: "POST",
