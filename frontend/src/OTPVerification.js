@@ -53,8 +53,7 @@ export default function OTPVerification( request_id) {
       return response.json();
     })
      .then((data) => {
-      localStorage.setItem('auth_key', 123)
-      navigate("/dashboard");
+      navigate("/");
     })
      .catch((error) => {
       console.error("Error verifying OTP", error);
