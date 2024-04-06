@@ -73,7 +73,7 @@ app = FastAPI()
 
 
 @app.post("/register/")
-def register(user_data: UserRegistration):
+async def register(user_data: UserRegistration):
     email = user_data.email
     name = user_data.name
     password = user_data.password
@@ -82,4 +82,21 @@ def register(user_data: UserRegistration):
         raise HTTPException(status_code=400, detail="Email, name, and password are required.")
 
     return otpMail(email, name, password)
+
+
+class verify(BaseModel):
+    requestId: str
+    otp: str
+
+
+@app.post("/verify/")
+async def register(verify_data: verify):
+    if verify_data.requestId not in ids:
+        raise HTTPException(status_code=400, detail="Invalid request ID")
+    else:
+        if ids[verify_data.requestId].verify(verify_data.otp):
+            return {"message": "OTP is valid. User registered successfully."}
+        else:
+            raise HTTPException(status_code=400, detail="Invalid OTP")
+        
 
