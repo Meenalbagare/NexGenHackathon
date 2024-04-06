@@ -155,4 +155,27 @@ async def login(user_data: login):
         raise HTTPException(status_code=400, detail="Invalid password")
     return {"message": result[4]}
 
+class access(BaseModel):
+    email: str
+    auth: str
+
+@app.post("/chathistory/")
+async def getChatHistory(user_data: access):
+    email = user_data.email
+    auth = user_data.auth
+
+    cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+    result = cursor.fetchone()
+    print(result)
+    if not result:
+        raise HTTPException(status_code=400, detail="User not found")
+    if result[4] != auth:
+        raise HTTPException(status_code=400, detail="Invalid auth")
+    cursor.execute("SELECT * FROM chat_history WHERE user_id=%s", (result[0],))
+    result = cursor.fetchall()
+    if result:
+        return {"message": result}
+    else:
+        return {"message": "No chat history found"}
+
 
