@@ -14,6 +14,7 @@ connection = mysql.connector.connect(
     database="NexGenDB"
 )
 
+
 cursor = connection.cursor()
 
 class UserRegistration(BaseModel):
@@ -153,4 +154,5 @@ async def login(user_data: login):
     if result[3] != password:
         raise HTTPException(status_code=400, detail="Invalid password")
     return {"message": result[4]}
+
 
