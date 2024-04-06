@@ -54,7 +54,7 @@ export default function OTPVerification() {
       <h3>Enter OTP</h3>
       <form onSubmit={handleSubmit}>
         <div style={styles.otpContainer}>{otpInputs}</div>
-        <button type="submit" className="btn btn-primary mt-3">
+        <button type="submit" className="btn btn-primary mt-3 ">
           Verify OTP
         </button>
       </form>
