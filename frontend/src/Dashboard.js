@@ -42,31 +42,35 @@ const Dashboard = () => {
   if (!localStorage.getItem("auth_key")) {
     return null;
   }
+
   const handleNewChat = () => {
     const newChat = [];
-    setChats([...chats, newChat]);
-    setCurrentChatIndex(chats.length); // Switch to the new chat index
-    setNewMessage(''); // Clear the message input for the new chat
+    setChats([newChat, ...chats]); // Place new chat at the beginning of the chats array
+    setCurrentChatIndex(0); // Switch to the new chat index
   };
 
   return (
     <div className="dashboard-container">
       {/* Chat History */}
       <div className="chat-history">
-        {/* Render chat tabs for each chat */}
-        {chats.map((chat, index) => (
-          <button
-            key={index}
-            className={`chat-tab ${index === currentChatIndex ? 'active-chat' : ''}`}
-            onClick={() => setCurrentChatIndex(index)}
-          >
-            Chat {index + 1}
+        {/* "New Chat" Header */}
+        <div className="new-chat-header">
+          <h3>New Chat</h3>
+          {/* <div className="new-chat-label">New Chat</div> */}
+          <button className="new-chat-button" onClick={handleNewChat}>
+            + New Chat
           </button>
-        ))}
-        {/* Button to create a new chat */}
-        <button className="new-chat-button" onClick={handleNewChat}>
-          + New Chat
-        </button>
+        </div>
+        {/* Render chat tabs for each chat */}
+        <div className="chat-tabs">
+          {chats.map((chat, index) => (
+            <div key={index} className={`chat-tab ${index === currentChatIndex ? 'active-chat' : ''}`}>
+              <button onClick={() => setCurrentChatIndex(index)}>
+                Chat {index + 1}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Chat Space */}
