@@ -6,6 +6,8 @@ from email.mime.multipart import MIMEMultipart
 import pyotp
 from pydantic import BaseModel
 import mysql.connector
+import google.generativeai as genai
+
 
 import importlib.util
 import os
@@ -215,7 +217,9 @@ async def getPromptResponse(details: chat_details):
     print(result)
     user_id = result[0]
     print( "User_id: ", user_id )
-    result = ""
-    # result, chat_id = llm_module.extendedChat( user_id, chat_id, prompt)
-    # result = llm_module.getExtendedPromptResponse(prompt)
+
+    google_api_key = os.getenv("API_KEY")
+    genai.configure(api_key = "AIzaSyDvmU7P5dzVy35iCL5kmnRO7XJXj3eIYdo")
+    result, chat_id = llm_module.extendedChat( user_id, chat_id, prompt)
+
     return {"result": result, "chat_id": chat_id}

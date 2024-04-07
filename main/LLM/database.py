@@ -1,6 +1,6 @@
 import mysql.connector
 
-password = "MySqL@123"
+password = "root"
 
 def create_database():
     try:
@@ -125,26 +125,21 @@ def insert_into_history_table( user_id, topic, history):
         # Creating a cursor object using the cursor() method
         cursor = connection.cursor()
 
-        # SQL query to create a table
-        insert_query = f"""
-        INSERT INTO TABLE chat_history VALUES (
-            {user_id},
-            {topic},
-            {history}
-        )
-        """
+        # # SQL query to create a table
+        # sql = "INSERT INTO chat_history (user_id, topic, history) VALUES (%s, %s, %s)"
+        # val = (user_id, topic, history)
+        # cursor.execute(sql, val)
 
-        select_query = f"""
-            SELECT chat_id FROM chat_history WHERE user_id = {user_id} DESC LIMIT 1
-        """
-        # Executing the SQL query
-        cursor.execute(insert_query)
-        cursor.execute(select_query)
+        # select_query = f"""
+        #     SELECT chat_id FROM chat_history WHERE user_id = {user_id} ORDER BY chat_id DESC LIMIT 1
+        # """
+        # # Executing the SQL query
+        # cursor.execute(select_query)
 
-        result = cursor.fetchone()
-        chat_id = result[0]
+        # result = cursor.fetchone()
+        # chat_id = result[0]
 
-        return chat_id
+        return -1
 
     except mysql.connector.Error as error:
         print("Failed to insert data to History table: {}".format(error))
@@ -170,7 +165,7 @@ def update_chat_history( chat_id, user_id, history):
 
         # SQL query to create a table
         update_query = f"""
-            UPDATE chat_history SET history = {history}
+            UPDATE chat_history SET history = '{history}'
             WHERE user_id = {user_id} AND chat_id = {chat_id}
         """
 

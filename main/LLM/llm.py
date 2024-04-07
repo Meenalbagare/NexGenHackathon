@@ -6,21 +6,20 @@ load_dotenv()
 
 import importlib.util
 import os
-import database
 
 
-def import_module_from_directory(directory, package_name, module_name):
-    file_path = os.path.join(directory, package_name, module_name + ".py")
+def import_module_from_directory(directory, module_name):
+    file_path = os.path.join(directory, module_name + ".py")
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
     return module
 
-bing_module = import_module_from_directory(os.path.basename(os.path.dirname(os.path.abspath(__file__)), "scrapers", "bing"))
-google_module = import_module_from_directory(os.path.basename(os.path.dirname(os.path.abspath(__file__)), "scrapers", "google"))
-vector_db = import_module_from_directory(os.path.dirname(os.path.abspath(__file__), "text"))
-
+bing_module = import_module_from_directory(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scrapers"), "bing")
+google_module = import_module_from_directory(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scrapers"), "google")
+vector_db = import_module_from_directory(os.path.dirname(os.path.abspath(__file__)), "text")
+database = import_module_from_directory(os.path.dirname(os.path.abspath(__file__)), "database")
 
 
 google_api_key = os.getenv("API_KEY")
@@ -126,13 +125,13 @@ def chat(user_id, chat_id, prompt):
 def extendedChat(user_id, chat_id, prompt):
     if( chat_id == -1 ):
         extended_prompt = getExtendedPrompt(prompt)
-        response, history = getExtendedChatResponse( prompt )
+        response, history = getExtendedChatResponse( extended_prompt )
         topic = getChatTopic( prompt )
         chat_id = database.insert_into_history_table( user_id, topic, history)
     else:
         extended_prompt = getExtendedPrompt(prompt)
         history = database.getChatHistory( chat_id, user_id)
-        response, history = getChatResponse( prompt, history )
+        response, history = getExtendedChatResponse( extended_prompt, history )
         database.update_chat_history( chat_id, user_id, history)
     return response, chat_id
 
@@ -199,5 +198,5 @@ def getExtendedChatResponse( prompt, history = [] ):
 
     return res, history
 
-response = getExtendedPromptResponse( "Explain theory of relativity in the easiest way..")
-print(response)
+# response = getExtendedPromptResponse( "Explain theory of relativity in the easiest way..")
+# print(response)

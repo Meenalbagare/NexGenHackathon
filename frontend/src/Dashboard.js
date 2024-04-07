@@ -7,8 +7,9 @@ const Dashboard = () => {
   const [chats, setChats] = useState([[]]); // State to hold chat messages (array of chats)
   const [currentChatIndex, setCurrentChatIndex] = useState(0); // State to track the current chat index
   const [newMessage, setNewMessage] = useState(''); // State to track new message input
+  const [currentChatId, setCurrentChatId] = useState(-1)
   const navigate = useNavigate();
-
+  // setCurrentChatId(-1)
   const handleInputChange = (e) => {
     setNewMessage(e.target.value); // Update new message input state
   };
@@ -23,7 +24,7 @@ const Dashboard = () => {
           sentByUser: true // Assume message is sent by the user
         }
       ];
-      console.log(  JSON.stringify({ email: localStorage.getItem('email'), chat_id: -1, prompt: newMessage }));
+      console.log(  JSON.stringify({ email: localStorage.getItem('email'), chat_id: currentChatId, prompt: newMessage }));
       try {
         // Send the prompt message to the API endpoint
         const response = await fetch("http://localhost:8000/chat/", {
@@ -31,19 +32,21 @@ const Dashboard = () => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email: localStorage.getItem('email'), chat_id: -1, prompt: newMessage })
+          body: JSON.stringify({ email: localStorage.getItem('email'), chat_id: currentChatId, prompt: newMessage })
         });
 
         if (response.ok) {
           const responseData = await response.json();
+          console.log(responseData)
           // Append the response message to the chat
           updatedChats[currentChatIndex] = [
             ...updatedChats[currentChatIndex],
             {
-              content: responseData.message,
+              content: responseData.result,
               sentByUser: false // Response message is sent by the system
             }
           ];
+          setCurrentChatId(responseData.chat_id)
           setChats(updatedChats);
           // Clear the new message input
           setNewMessage('');
@@ -71,6 +74,7 @@ const Dashboard = () => {
   }
 
   const handleNewChat = () => {
+    setCurrentChatId(-1)
     const newChat = [];
     setChats([...chats, newChat]); // Add new chat to the end of the chats array
     setCurrentChatIndex(chats.length); // Switch to the new chat index
