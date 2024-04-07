@@ -7,15 +7,28 @@ import pyotp
 from pydantic import BaseModel
 import mysql.connector
 
-connection = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="MySqL@123",
-    database="NexGenDB"
-)
+import importlib.util
+import os
 
 
-cursor = connection.cursor()
+def import_module_from_directory(directory, module_name):
+    file_path = os.path.join(directory, module_name + ".py")
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    return module
+
+llm_module = import_module_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), "main", "llm"), "llm")
+
+# connection = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     password="root",
+#     database="NexGenDB"
+# )
+
+# cursor = connection.cursor()
 
 class UserRegistration(BaseModel):
     email: str
@@ -32,7 +45,7 @@ def sendMail(mail, subject, body):
     try:
         sender_email = "nexgenhackathon@gmail.com"
         receiver_email = mail
-        password = "ivco skca aznw dgvs"  
+        password = "ivco skca aznw dgvs"
 
         message = MIMEMultipart()
         message["From"] = sender_email
@@ -53,6 +66,15 @@ ids = {}
 verify_data = {}
 
 
+connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="root",
+        database = "NexGenDb"
+    )
+
+# Creating a cursor object using the cursor() method
+cursor = connection.cursor()
 
 
 def otpMail(mail, name, password):
@@ -128,12 +150,12 @@ class verify(BaseModel):
 async def register(verify_val: verify):
     if verify_val.requestId not in ids:
         raise HTTPException(status_code=400, detail="Invalid request ID")
-        
+
     else:
         if ids[verify_val.requestId].verify(verify_val.otp):
             curr = generateAuthenticationKey()
             cursor.execute('INSERT INTO users (name, email, password, auth) VALUES (%s, %s, %s, %s)', (verify_data[verify_val.requestId][1], verify_data[verify_val.requestId][0], verify_data[verify_val.requestId][2], curr))
-            connection.commit()     
+            connection.commit()
             return {"message": curr}
         else:
             raise HTTPException(status_code=400, detail="Invalid OTP")
@@ -145,7 +167,6 @@ class login(BaseModel):
 async def login(user_data: login):
     email = user_data.email
     password = user_data.password
-
     cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
     result = cursor.fetchone()
     print(result)
@@ -159,12 +180,15 @@ async def login(user_data: login):
 class access(BaseModel):
     email: str
     auth: str
+class chat_details(BaseModel):
+    email: str
+    chat_id: int
+    prompt: str
 
 @app.post("/chathistory/")
 async def getChatHistory(user_data: access):
     email = user_data.email
     auth = user_data.auth
-
     cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
     result = cursor.fetchone()
     print(result)
@@ -179,4 +203,19 @@ async def getChatHistory(user_data: access):
     else:
         return {"message": "No chat history found"}
 
+@app.post("/chat/")
+async def getPromptResponse(details: chat_details):
+    email = details.email
+    chat_id = details.chat_id
+    prompt = details.prompt
 
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+    result = cursor.fetchone()
+    print(result)
+    user_id = result[0]
+    print( "User_id: ", user_id )
+    result = ""
+    # result, chat_id = llm_module.extendedChat( user_id, chat_id, prompt)
+    # result = llm_module.getExtendedPromptResponse(prompt)
+    return {"result": result, "chat_id": chat_id}
